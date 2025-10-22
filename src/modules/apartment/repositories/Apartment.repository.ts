@@ -110,6 +110,11 @@ export class ApartmentRepository implements IApartmentRepository {
         apartment: Partial<IApartment>
     ): Promise<Partial<IApartment> | null> => {
         const { uuid, hostName, hostUUID, title, description } = apartment;
+        const cachedKey = `${CachePrefix.AN_APARTMENT}/${uuid}`;
+
+        const cached = await this.cache.get<Partial<IApartment>>(cachedKey);
+        if (cached) return cached;
+
         const exists = await ApartmentModel(this.dbConnect.instance()).findOne({
             where: {
                 [Op.or]: [
@@ -128,7 +133,6 @@ export class ApartmentRepository implements IApartmentRepository {
         });
         if (!exists) return null;
 
-        const cachedKey = `${CachePrefix.AN_APARTMENT}/${exists.uuid}`;
         void this.cache.set<Partial<IApartment>>({
             key: cachedKey,
             value: exists,

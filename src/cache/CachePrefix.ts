@@ -10,7 +10,9 @@ export enum CachePrefix {
 
     //Apartments
     RETRIEVED_APARTMENTS = 'retrieved_apartments',
-    AN_APARTMENT = 'an_apartment'
+    AN_APARTMENT = 'an_apartment',
+
+    A_BOOKING = 'a_booking'
 
     //Third-party
 }
