@@ -154,22 +154,22 @@ export class DatabaseConnection implements IDatabaseConnection {
                     max: 10,
                     // @note https://github.com/sequelize/sequelize/issues/8133#issuecomment-359993057
                     acquire: 5000, // The maximum time, in milliseconds, that pool will try to get connection before throwing error
-                    evict: 10000, // The time interval, in milliseconds, after which sequelize-pool will remove idle connections.
+                    evict: 2000, // The time interval, in milliseconds, after which sequelize-pool will remove idle connections.
                     maxUses: 10 // The number of times to use a connection before closing and replacing it.  Default is Infinity
                 },
                 retry: {
                     match: [/SequelizeConnectionAcquireTimeoutError/i], // Retry on connection errors
-                    max: 3, // Maximum retry 3 times
+                    max: 1, // Maximum retry 1 time
                     backoffBase: 3000, // Initial backoff duration in ms. Default: 100,
                     backoffExponent: 1.5, // Exponent to increase backoff each try. Default: 1.1
-                    timeout: 3000
+                    timeout: 5000
                 }
             });
             console.log({ sequelize: this.sequelize });
             console.log({ credentials });
 
             await this.sequelize.authenticate({
-                retry: { max: 3, timeout: 100000 }
+                retry: { max: 3 }
             });
             Logger.warn('Done authenticating?');
 
