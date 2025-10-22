@@ -38,14 +38,13 @@ export class CreateApartmentController extends Controller {
     ) {
         const { user } = req;
 
-        const resp = await this.createApartmentService.create({
+        await this.createApartmentService.create({
             userUUID: user.userUUID,
             payload: body
         });
 
         return ResponseDTO.success({
-            message: 'Apartment created successfully',
-            data: resp
+            message: 'Apartment created successfully'
         });
     }
 }
