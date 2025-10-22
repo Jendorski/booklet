@@ -1,0 +1,24 @@
+node_modules
+npm-debug.log
+
+#docker build -t backend .
+pnpm-lock.yaml
+yarn.lock
+Dockerfile*
+.deploy/*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+README.md
+LICENSE
+.vscode
+Makefile
+helm-charts
+.env
+.editorconfig
+.idea
+coverage*
+
+# Ignore generated credentials from google-github-actions/auth
+gha-creds-*.json

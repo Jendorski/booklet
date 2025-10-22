@@ -1,0 +1,336 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"IUserType": {
+				"type": "string",
+				"enum": [
+					"host",
+					"guest"
+				]
+			},
+			"RegisterUserDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"firstName": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"fullName": {
+						"type": "string"
+					},
+					"userName": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"confirmPassword": {
+						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/IUserType"
+					}
+				},
+				"required": [
+					"email",
+					"fullName",
+					"password",
+					"confirmPassword",
+					"type"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_IApartment_": {
+				"properties": {},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"ResponseStatus": {
+				"enum": [
+					"success",
+					"error"
+				],
+				"type": "string"
+			},
+			"ResponseDTO__total-number--records-Partial_IApartment_-Array__": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"records": {
+								"items": {
+									"$ref": "#/components/schemas/Partial_IApartment_"
+								},
+								"type": "array"
+							},
+							"total": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"records",
+							"total"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseDTO_Partial_IApartment__": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/Partial_IApartment_"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IApartmentAmenities": {
+				"enum": [
+					"gas_cooker",
+					"air_conditioning",
+					"water_heater",
+					"inverter",
+					"car_garage"
+				],
+				"type": "string"
+			},
+			"AddApartmentDTO": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"pricePerNight": {
+						"type": "number",
+						"format": "double"
+					},
+					"location": {
+						"type": "string"
+					},
+					"amenities": {
+						"items": {
+							"$ref": "#/components/schemas/IApartmentAmenities"
+						},
+						"type": "array"
+					},
+					"bedrooms": {
+						"type": "number",
+						"format": "double"
+					},
+					"toilets": {
+						"type": "number",
+						"format": "double"
+					},
+					"bathroom": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"title",
+					"description",
+					"pricePerNight",
+					"location",
+					"bedrooms",
+					"toilets",
+					"bathroom"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"bearerAuth": {
+				"type": "http",
+				"scheme": "bearer",
+				"bearerFormat": "JWT"
+			},
+			"xAccessToken": {
+				"type": "apiKey",
+				"in": "header",
+				"description": "add this to the header",
+				"name": "X-ACCESS-TOKEN"
+			}
+		}
+	},
+	"info": {
+		"title": "booklet",
+		"version": "1.0.0",
+		"description": "Repository that showcases how a shortlet can be developed",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RegisterUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/apartments": {
+			"get": {
+				"operationId": "Get",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO__total-number--records-Partial_IApartment_-Array__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Apartment Management"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "limit",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/apartment/{uuid}": {
+			"get": {
+				"operationId": "GetAnApartment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO_Partial_IApartment__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Apartment Management"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "uuid",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/apartment": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO_Partial_IApartment__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Apartment Management"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/AddApartmentDTO"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/api/v1"
+		}
+	]
+}

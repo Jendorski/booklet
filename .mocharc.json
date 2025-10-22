@@ -1,0 +1,16 @@
+{
+    "extension": ["ts"],
+    "require": ["tsx", "./src/mochaGlobalSetup.ts"],
+    "diff": true,
+    "timeout": 45000,
+    "spec": [
+        "src/**/*.{i,u}spec.ts",
+        "src/modules/**/services/*.service.ts",
+        "src/modules/**/controllers/*.controller.{i,u}spec.ts",
+        "src/modules/**/controllers/*.controller.ts"
+    ],
+    "check-leaks": true,
+    "fail-zero": true,
+    "exit": true,
+    "color": true
+}

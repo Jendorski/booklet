@@ -1,0 +1,40 @@
+{
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
+  "controllerPathGlobs": ["src/**/*.controller.ts"],
+  "spec": {
+    "outputDirectory": "public",
+    "specVersion": 3,
+    "basePath": "/api/v1",
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "xAccessToken": {
+        "type": "apiKey",
+        "in": "header",
+        "description": "add this to the header",
+        "name": "X-ACCESS-TOKEN"
+      }
+    },
+    "headers": {
+      "CustomHeader": {
+        "name": "X-Custom-Header",
+        "in": "header",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "description": "Custom header for API requests"
+      }
+    }
+  },
+  "routes": {
+    "basePath": "/api/v1",
+    "routesDir": "src",
+    "iocModule": "src/shared/ioc.ts",
+    "middleware": "express"
+  }
+}

@@ -1,0 +1,107 @@
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: booklet_backend_app
+        ports:
+            - 9088:9088
+        env_file: .env
+        networks:
+            - backend_net
+        volumes:
+            - ./package.json:/backend/package.json
+            - ./tsconfig.json:/backend/tsconfig.json
+            - ./tsoa.json:/backend/tsoa.json
+            - ./src:/backend/src
+        depends_on:
+            backend_cache:
+                condition: service_healthy
+        command: bash -c "pnpm install && pnpm start:dev"
+
+    backend_cache:
+        container_name: booklet_backend_cache
+        image: redis:8.0.1-alpine
+        ports:
+            - 6370:6370
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+        environment:
+            - REDIS_HOST=redis
+            - REDIS_PORT=6370
+        networks:
+            - backend_net
+
+    # Monitoring]
+    backend_grafana:
+        image: grafana/grafana:latest
+        container_name: booklet_backend_grafana
+        ports:
+            - "3010:3000"
+        networks:
+            - backend_net
+        environment:
+            - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+            - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+        entrypoint:
+            - sh
+            - -euc
+            - |
+                mkdir -p /etc/grafana/provisioning/datasources
+                cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+                apiVersion: 1
+                datasources:
+                - name: Loki
+                type: loki
+                access: proxy 
+                orgId: 1
+                url: http://loki:3099
+                basicAuth: false
+                isDefault: true
+                version: 1
+                editable: false
+                EOF
+                /run.sh
+        volumes:
+            - grafana-storage:/var/lib/grafana
+
+    backend_loki:
+        image: grafana/loki:2.7.0
+        container_name: booklet_backend_loki
+        ports:
+            - "3099:3099"
+        volumes:
+            - ./scripts/monitoring/loki-config.yml:/etc/loki/local-config.yml
+        command: -config.file=/etc/loki/local-config.yaml
+        networks:
+            - backend_net
+
+    backend_alloy:
+        image: grafana/alloy:latest
+        container_name: booklet_backend_alloy
+        volumes:
+            - ./scripts/monitoring/alloy-config.alloy:/etc/alloy/config.alloy
+            - /var/lib/docker/containers:/var/lib/docker/containers:ro
+            - /var/run/docker.sock:/var/run/docker.sock
+        command:
+            - "run"
+            - "--server.http.listen-addr=:6789"
+            - "/etc/alloy/config.alloy"
+        #command: run --server.http.listen-port=6789 /etc/alloy/config.alloy
+        ports:
+            - "6789:6789" # Alloy UI and metrics
+        networks:
+            - backend_net
+
+networks:
+    backend_net:
+        driver: bridge
+
+volumes:
+    grafana-storage:

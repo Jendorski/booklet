@@ -1,0 +1,42 @@
+name: Pull Request Workflow
+
+on:
+  pull_request:
+
+jobs:
+  build:
+    name: Lint & Test
+    runs-on: self-hosted #ubuntu-latest  self-hosted
+    environment: main
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: "lateral-medium-358108"
+          workload_identity_provider: "projects/264795560183/locations/global/workloadIdentityPools/github-actions-pool/providers/my-gihub-repo-oidc"
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.5.1"
+
+      - name: Run Lint
+        run: |
+          npm install -g pnpm
+          pnpm install
+          pnpm swagger
+          pnpm build
+          pnpm lint
+
+      - name: Run Tests
+        run: |
+          pnpm build
+          pnpm test:run
