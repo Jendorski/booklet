@@ -16,7 +16,7 @@ services:
             ENV: development
             PORT: 9088
             REDIS_HOST: backend_cache
-            REDIS_PORT: 6370
+            REDIS_PORT: 6379
             APP_NAME: Booklet Development
             DB_SECRET_NAME: dev-postgres-creds
             JWT_SECRET_NAME: dev-jwt-creds
@@ -35,7 +35,7 @@ services:
         container_name: booklet_backend_cache
         image: redis:8.0.1-alpine
         ports:
-            - 6370:6370
+            - 6379:6379
         healthcheck:
             test: ["CMD", "redis-cli", "ping"]
             interval: 30s
