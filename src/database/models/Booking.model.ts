@@ -10,7 +10,7 @@ export enum IBookingStatus {
 }
 
 export interface IBooking {
-    uuid: string;
+    uuid?: string;
     apartmentUUID: string;
     reference: string;
     guestUUID: string;
