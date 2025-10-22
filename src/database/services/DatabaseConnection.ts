@@ -165,11 +165,13 @@ export class DatabaseConnection implements IDatabaseConnection {
                     timeout: 3000
                 }
             });
+            console.log({ sequelize: this.sequelize });
             console.log({ credentials });
 
             await this.sequelize.authenticate({
-                retry: { max: 3 }
+                retry: { max: 3, timeout: 100000 }
             });
+            Logger.warn('Done authenticating?');
 
             if (allowMigration) {
                 Logger.warn('Start migrating...');
