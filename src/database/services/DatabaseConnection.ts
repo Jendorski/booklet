@@ -33,6 +33,7 @@ export class DatabaseConnection implements IDatabaseConnection {
         const config = container.resolve<Config>(Config);
 
         const secretName = config.get<string>('DB_SECRET_NAME', '');
+        console.log({ secretName });
         if (!secretName || isEmpty(secretName)) {
             throw new CustomException('Invalid configuration');
         }
@@ -40,6 +41,7 @@ export class DatabaseConnection implements IDatabaseConnection {
         this.secretName = secretName;
 
         const encoded = config.get<string>('GOOGLE_SERVICE_ACCOUNT', '');
+        console.log({ encoded });
         if (!encoded || isEmpty(encoded)) {
             throw new CustomException(
                 'Service account is needed to initiate database connection'
@@ -66,6 +68,7 @@ export class DatabaseConnection implements IDatabaseConnection {
                 this.secretName,
                 secretVersionId
             );
+            console.log([name]);
 
             const [version] = await this.secretClient.accessSecretVersion({
                 name: name
