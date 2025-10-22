@@ -9,10 +9,21 @@ jobs:
     runs-on: ubuntu-latest
     environment: main
 
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: "read"
+      pages: write
+      id-token: "write"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Authenticate to Google Cloud
+        uses: "google-github-actions/auth@v2"
+        with:
+          project_id: "lateral-medium-358108"
+          workload_identity_provider: "projects/264795560183/locations/global/workloadIdentityPools/github-actions-pool/providers/my-gihub-repo-oidc"
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:

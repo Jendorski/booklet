@@ -57,14 +57,10 @@ export class JWTService implements IJwtService {
             );
         }
 
-        const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
-
-        const keyFile: { project_id: string } = JSON.parse(decoded);
-
-        this.projectId = keyFile.project_id;
+        this.projectId = encoded;
 
         return new SecretManagerServiceClient({
-            projectId: keyFile.project_id
+            projectId: encoded
         });
     };
 
@@ -85,14 +81,10 @@ export class JWTService implements IJwtService {
             );
         }
 
-        const decoded = Buffer.from(encoded, 'base64').toString('utf-8');
-
-        const keyFile: { project_id: string } = JSON.parse(decoded);
-
-        this.projectId = keyFile.project_id;
+        this.projectId = encoded;
 
         return new SecretManagerServiceClient({
-            projectId: keyFile.project_id
+            projectId: encoded
         });
     };
 
