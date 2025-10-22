@@ -173,16 +173,16 @@ export class ApartmentRepository implements IApartmentRepository {
 
         const { query, offset } = queryBuilder({ ...props }, [], true);
 
-        const records = await ApartmentModel(this.dbConnect.instance()).findAll(
-            {
-                where: query.where,
-                offset,
-                limit,
-                raw: true
-            }
-        );
+        const sql = this.dbConnect.instance();
 
-        const count = await ApartmentModel(this.dbConnect.instance()).count({
+        const records = await ApartmentModel(sql).findAll({
+            where: query.where,
+            offset,
+            limit,
+            raw: true
+        });
+
+        const count = await ApartmentModel(sql).count({
             where: query.where
         });
 

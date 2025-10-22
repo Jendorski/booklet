@@ -1,11 +1,14 @@
 import { inject, injectable } from 'tsyringe';
 import { IBookingRepository } from '../interfaces/IBookingRepository';
-import { QueryTypes } from '@sequelize/core';
+import { QueryTypes, Transaction } from '@sequelize/core';
 import { DatabaseComponents } from '../../../database/constants/DatabaseComponents';
 import { IDatabaseConnection } from '../../../database/interfaces/IDatabaseConnection';
 import { CacheComponents } from '../../../cache/cacheComponents';
 import { ICache } from '../../../cache/interfaces/ICache';
-import BookingModel, { IBooking } from '../../../database/models/Booking.model';
+import BookingModel, {
+    IBooking,
+    IBookingStatus
+} from '../../../database/models/Booking.model';
 import { IAny, queryBuilder } from '../../../shared/utils/helpers';
 import { CachePrefix } from '../../../cache/CachePrefix';
 
@@ -63,17 +66,114 @@ export class BookingRepository implements IBookingRepository {
 
         return { total: count, bookings: records };
     };
-    retrieveBookingsForAnApartment(
-        apartmentUUID: string
-    ): Promise<{ total: number; bookings: Partial<IBooking>[] }> {
-        throw new Error('Method not implemented.');
-    }
+
+    findBookingsForAnApartment = async (props: {
+        apartmentUUID: string;
+        page: number;
+        limit: number;
+    }): Promise<{ total: number; bookings: Partial<IBooking>[] }> => {
+        const { query, offset, limit } = queryBuilder({ ...props }, []);
+
+        const sql = this.dbConnect.instance();
+
+        const records = await BookingModel(sql).findAll({
+            where: query.where,
+            offset,
+            limit,
+            raw: true
+        });
+
+        const count = await BookingModel(sql).count({
+            where: query.where
+        });
+
+        return { total: count, bookings: records };
+    };
+
+    retrieveBookingsForAnApartment = async (props: {
+        apartmentUUID: string;
+        page: number;
+        limit: number;
+    }): Promise<{ total: number; bookings: Partial<IBooking>[] }> => {
+        const { apartmentUUID, page, limit } = props;
+        const cachedKey = `${CachePrefix.BOOKINGS_FOR_AN_APARTMENT}/${apartmentUUID}`;
+
+        const total = await this.cache.lLen(cachedKey);
+
+        if (total === 0) {
+            const fromDB = await this.findBookingsForAnApartment({
+                page,
+                limit,
+                apartmentUUID
+            });
+
+            void this.toCache({
+                cachedKey,
+                records: fromDB.bookings
+            });
+
+            return fromDB;
+        } else {
+            const start = page === 1 ? page - 1 : limit * (page - 1);
+            const stop = page === 1 ? limit - 1 : start + (limit - 1);
+
+            const cached = await this.cache.lRange<Partial<IBooking>>({
+                key: cachedKey,
+                start,
+                stop
+            });
+
+            if (cached.length === 0) {
+                const fromDB = await this.findBookingsForAnApartment({
+                    page,
+                    limit,
+                    apartmentUUID
+                });
+                void this.toCache({ cachedKey, records: fromDB.bookings });
+
+                return fromDB;
+            }
+
+            return { total, bookings: cached };
+        }
+    };
+
+    private readonly toCache = async (props: {
+        cachedKey: string;
+        records: Partial<IBooking>[];
+    }) => {
+        const { cachedKey, records } = props;
+
+        for (const booking of records) {
+            await this.cache.push<Partial<IBooking>>({
+                key: cachedKey,
+                value: booking
+            });
+        }
+    };
 
     newBooking = async (
         payload: Partial<IBooking>
     ): Promise<Partial<IBooking>> => {
-        await this.cache.delete('');
-        throw new Error('Method not implemented.');
+        const newBooking: IBooking = {
+            reference: payload.reference as string,
+            apartmentUUID: payload.apartmentUUID as string,
+            totalAmountPaid: payload.totalAmountPaid as number,
+            checkoutDate: payload.checkoutDate as string,
+            cautionFee: payload.cautionFee as number,
+            bookingDate: payload.bookingDate as string,
+            status: payload.status as IBookingStatus,
+            numberOfNights: payload.numberOfNights as number,
+            guestUUID: payload.guestUUID as string
+        };
+
+        const addProcess = async (transaction: Transaction) => {
+            const sql = this.dbConnect.instance();
+
+            await BookingModel(sql).create(newBooking, { transaction });
+        };
+
+        await this.dbConnect.executeTransaction(addProcess);
     };
 
     truncate = async (): Promise<void> => {

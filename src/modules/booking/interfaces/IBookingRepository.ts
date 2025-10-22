@@ -10,9 +10,16 @@ export interface IBookingRepository {
         queryRecord: Record<string, IAny>
     ): Promise<{ total: number; bookings: Partial<IBooking>[] }>;
 
-    retrieveBookingsForAnApartment(
-        apartmentUUID: string
-    ): Promise<{ total: number; bookings: Partial<IBooking>[] }>;
+    findBookingsForAnApartment(props: {
+        apartmentUUID: string;
+        page: number;
+        limit: number;
+    }): Promise<{ total: number; bookings: Partial<IBooking>[] }>;
+    retrieveBookingsForAnApartment(props: {
+        apartmentUUID: string;
+        page: number;
+        limit: number;
+    }): Promise<{ total: number; bookings: Partial<IBooking>[] }>;
 
     truncate(): Promise<void>;
 }
