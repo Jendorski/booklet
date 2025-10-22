@@ -1,0 +1,7 @@
+services:
+    backend:
+        command: bash -c 'npm run build && npm run test:watch'
+
+networks:
+    backend_net:
+        driver: bridge

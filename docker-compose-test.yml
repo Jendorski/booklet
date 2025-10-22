@@ -1,0 +1,119 @@
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: booklet_backend_app
+        ports:
+            - 9088:9088
+        volumes:
+            - ./package.json:/backend/package.json
+            - ./tsconfig.json:/backend/tsconfig.json
+            - ./.mocharc.json:/backend/.mocharc.json
+            - ./tsoa.json:/backend/tsoa.json
+            - ./src:/backend/src
+        environment:
+            ENV: development
+            PORT: 9088
+            REDIS_HOST: backend_cache
+            REDIS_PORT: 6370
+            APP_NAME: Booklet Development
+            DB_SECRET_NAME: dev-postgres-creds
+            JWT_SECRET_NAME: dev-jwt-creds
+            PASSWORD_SECRET_NAME: dev-password-creds
+            GOOGLE_SERVICE_ACCOUNT: ewogICJ0eXBlIjogInNlcnZpY2VfYWNjb3VudCIsCiAgInByb2plY3RfaWQiOiAibGF0ZXJhbC1tZWRpdW0tMzU4MTA4IiwKICAicHJpdmF0ZV9rZXlfaWQiOiAiYjkwOTQ0OTI3NmExNTM4MmVjMGU4ZDk0NDJhNzdlYzMwYTY3ZmM1YiIsCiAgInByaXZhdGVfa2V5IjogIi0tLS0tQkVHSU4gUFJJVkFURSBLRVktLS0tLVxuTUlJRXZ3SUJBREFOQmdrcWhraUc5dzBCQVFFRkFBU0NCS2t3Z2dTbEFnRUFBb0lCQVFEUWJ5Q0kyNGR3ZTJPUFxuMjBndUphbU12V2NFOGIzb1g0ZThDajZvS25DZGU2WFJLOERYdjk1MlNodGliR0JkM3dnRkFMTUZISlMxVllhS1xuQnlSVVE4Sk5WZEtJdzQrajdKdWNZMmRWNkJ6QzBQR0hiSmt0b2hhcDVVZWxIeVA2bzMvVGIxYWZqeXlwL1ZBSFxuaWtNN0o4OFAzdVhRYWVvT0ZQUmUyMkcwMXJYQXE2dUlPVGJSME5uWjRaUFR5cCtibitNMjVIRmpmbE5DeHV2R1xuMWpjYjFqbjhWcE1iZ2l5NXpXSTl3dzl6WHUvcVZjMzRRL1E2WjlmNUp0cTR5NCs3RVFxeFhSNU9LMWkwSXd0QlxuZkZQcUJUS2hjNGZMSjR1RitMamx4TDBPVUVaaTVBTW1nd2R6WXpHcGFpZHBvcVJCemY3MEZ4cDFGcEdpY0ZRcVxubG9MakdNYjFBZ01CQUFFQ2dnRUFGZG5Za05CbTRnRmxmaUxRYmRvUDdNdThYWlhVUVdTbWI2MnBST3J5RkdodVxuaVQrcmYxTERpU1lhdWRZL3dnZU1LUzRhRm1xWkltdDlaOEg0Nm9hUis1YUlORU5BTDBDeVRaSlVObnJYYlFzSFxuanhsdzg0by9FditRNDd3Z2d2bWFBSG4zSEZJZnJoQjZ6OWVNVmNyR0Y5Vlh4V0lkSWUzTGNwaFFKV3V1OFN3OVxucGpCZUgxeVFYTzJNbU1MME02U0NFY0Q3TkZHeXVkNWcwbkh1VlExU2xQZmNxTGJLbkpoeUIxUkpiNFllQ2pUWVxuZmtrUXJta053ZjJOdjVybWwyZ3U1d0JrblBSSTFiS3A0alhZTlo4NXp2T3JDbFJmVVdtVExLTmR0ZFhxWktiV1xuYVhjcjVGbnR1cElyMy9yRE9vckp1Y2kvMG5CYTBXb3paMm1TZlR2eTRRS0JnUURxNXNtZzQvaHZaYXY0WlczV1xuNnlwdkg0RVNUMzc2MDI2cTJQRkdidjhvMGVkRE9iR3JZOXVwZnR1Nitqay9hZHdIMi9ib0VRY2ExL2c5aG1SQVxuNnY2S1lEbjhXWklYck5UR0lxL1dzVlp6MmhsaGhRM2RhTFd1WWU3ZHlEa2R1MFdTWnRDVVRxRlF5Q3FCUmo0S1xuT1NOUU1jRDhBQk0wQzRjOTYwK1VHYVJ4QlFLQmdRRGpKOEtnMW9OZzROUG9saWV3VVRHaGlpc0VIUWxzUEkzd1xuYzkvaGgzL0Nsek4zYm5uRXlDbzVGSVJmeWZhOUVMZGdpR2t1UE16MDFUSWdWSWRoemVhaVFTMjZveGcxa2s2YVxuTVBrNVFsRWhVNmlMNGt6MnpLYjRuek96VEhCUXRTTE9qMktwUTVRalRCUTBkLzBIRmJCUlV6bkwvZlZkVmxZL1xud0Y0ckkwK2hNUUtCZ1FDVExVTExvY3A0MFhVc1R6REE1ZHRTZ0tTNE9rTFBHVVpQbVZtaXpjemxZSTdMbWd4dFxuM0VVM0w1cXd6aktzUHNGejB5Z2lRdmoyb3JhUXBmR09reTRrdVNIYnNLdE9WaVdDZHgxQklSK1B1dWtJSnZ1R1xuN0NKWlBsY1JjbkFHNXQweVcyVDRaME8vZjRyU01KYVNoVFpRK3J0MXFQNWZMNUh2QTg1NmRvNkhtUUtCZ1FEUlxuamYyTCtUa3NKMXoycFljcHJrMjE4OHZwT0l4WDBLazAyUUVCZ3NvSER3dklzeDhjdlhmT1BySTcyQXFLc3FBcFxuS3M2MWZCdXNCZjMvTzF2RmkzaW4ySzlDRFhHcEFqY0hJZ1RZb09oTmNXcjgyU0VkVVFEOFBZb3BiMnZ4MkppcVxuckRaZFpsMkVEb3haTnhReTgvdzdtaWFvbkxrOWlRZDZPcEhsQStkVEVRS0JnUUNNZ0c2b1dtbk1NbTBNRUc0N1xuTjhQNyszNE4yc2FMcmtMS1pUOXVpMzUrTGhwM25wdnJ4NkhYUTlIZ1VCcENLSXdiQXhTSGtwQld2NkdiSHpIU1xuakNPR2hxRU1Sc2NYYTdZVFNZc282UFhBYUJ1TlZxaFI5UEdlaE9qbVhNa3pOOGFEdzdxVHdoU1NldFVTblFxaVxuYWExb3BBL2dxNU11aFJ4bkVYK3U5ZXQrdnc9PVxuLS0tLS1FTkQgUFJJVkFURSBLRVktLS0tLVxuIiwKICAiY2xpZW50X2VtYWlsIjogImdhYnJpZWwtdGVzdC1zZXJ2aWNlLWFjY291bnRAbGF0ZXJhbC1tZWRpdW0tMzU4MTA4LmlhbS5nc2VydmljZWFjY291bnQuY29tIiwKICAiY2xpZW50X2lkIjogIjExNzI0NjM2MTExNjkyMDY0MDE4OSIsCiAgImF1dGhfdXJpIjogImh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbS9vL29hdXRoMi9hdXRoIiwKICAidG9rZW5fdXJpIjogImh0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuIiwKICAiYXV0aF9wcm92aWRlcl94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL29hdXRoMi92MS9jZXJ0cyIsCiAgImNsaWVudF94NTA5X2NlcnRfdXJsIjogImh0dHBzOi8vd3d3Lmdvb2dsZWFwaXMuY29tL3JvYm90L3YxL21ldGFkYXRhL3g1MDkvZ2FicmllbC10ZXN0LXNlcnZpY2UtYWNjb3VudCU0MGxhdGVyYWwtbWVkaXVtLTM1ODEwOC5pYW0uZ3NlcnZpY2VhY2NvdW50LmNvbSIsCiAgInVuaXZlcnNlX2RvbWFpbiI6ICJnb29nbGVhcGlzLmNvbSIKfQo=
+
+        depends_on:
+            backend_cache:
+                condition: service_healthy
+        command: bash -c 'pnpm build && pnpm test'
+        networks:
+            - backend_net
+
+    #Redis-cluster
+    backend_cache:
+        container_name: booklet_backend_cache
+        image: redis:8.0.1-alpine
+        ports:
+            - 6370:6370
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+        environment:
+            - REDIS_HOST=redis
+            - REDIS_PORT=6370
+        networks:
+            - backend_net
+
+    # Monitoring]
+    backend_grafana:
+        image: grafana/grafana:latest
+        container_name: booklet_backend_grafana
+        ports:
+            - "3010:3000"
+        networks:
+            - backend_net
+        environment:
+            - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+            - GF_AUTH_ANONYMOUS_ENABLED=true
+            - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+            - GF_FEATURE_TOGGLES_ENABLE=alertingSimplifiedRouting,alertingQueryAndExpressionsStepMode
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+        entrypoint:
+            - sh
+            - -euc
+            - |
+                mkdir -p /etc/grafana/provisioning/datasources
+                cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+                apiVersion: 1
+                datasources:
+                - name: Loki
+                type: loki
+                access: proxy 
+                orgId: 1
+                url: http://loki:3099
+                basicAuth: false
+                isDefault: true
+                version: 1
+                editable: false
+                EOF
+                /run.sh
+        volumes:
+            - grafana-storage:/var/lib/grafana
+
+    backend_loki:
+        image: grafana/loki:2.7.0
+        container_name: booklet_backend_loki
+        ports:
+            - "3099:3099"
+        volumes:
+            - ./scripts/monitoring/loki-config.yml:/etc/loki/local-config.yml
+        command: -config.file=/etc/loki/local-config.yaml
+        networks:
+            - backend_net
+
+    backend_alloy:
+        image: grafana/alloy:latest
+        container_name: booklet_backend_alloy
+        volumes:
+            - ./scripts/monitoring/alloy-config.alloy:/etc/alloy/config.alloy
+            - /var/lib/docker/containers:/var/lib/docker/containers:ro
+            - /var/run/docker.sock:/var/run/docker.sock
+        command:
+            - "run"
+            - "--server.http.listen-addr=:6789"
+            - "/etc/alloy/config.alloy"
+        ports:
+            - "6789:6789" # Alloy UI and metrics
+        networks:
+            - backend_net
+
+networks:
+    backend_net:
+        driver: bridge
+
+volumes:
+    vault-data:
+    grafana-storage:

@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+    backend_app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - ./src:/app/src
+        ports:
+            - "9088:9088"
