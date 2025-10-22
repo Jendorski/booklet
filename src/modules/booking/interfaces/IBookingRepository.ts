@@ -7,7 +7,7 @@ export interface IBookingRepository {
     retrieveOne(bookingUUID: string): Promise<Partial<IBooking> | null>;
 
     findBookings(
-        query: Record<string, IAny>
+        queryRecord: Record<string, IAny>
     ): Promise<{ total: number; bookings: Partial<IBooking>[] }>;
 
     retrieveBookingsForAnApartment(

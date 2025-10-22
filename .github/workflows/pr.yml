@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     name: Lint & Test
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     environment: main
 
     # Add "id-token" with the intended permissions.

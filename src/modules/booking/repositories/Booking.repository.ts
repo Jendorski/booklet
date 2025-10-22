@@ -43,11 +43,26 @@ export class BookingRepository implements IBookingRepository {
 
         return exists;
     };
-    findBookings(
-        query: Record<string, IAny>
-    ): Promise<{ total: number; bookings: Partial<IBooking>[] }> {
-        throw new Error('Method not implemented.');
-    }
+    findBookings = async (
+        queryRecord: Record<string, IAny>
+    ): Promise<{ total: number; bookings: Partial<IBooking>[] }> => {
+        const { query, offset, limit } = queryBuilder(queryRecord, []);
+
+        const sql = this.dbConnect.instance();
+
+        const records = await BookingModel(sql).findAll({
+            where: query.where,
+            offset,
+            limit,
+            raw: true
+        });
+
+        const count = await BookingModel(sql).count({
+            where: query.where
+        });
+
+        return { total: count, bookings: records };
+    };
     retrieveBookingsForAnApartment(
         apartmentUUID: string
     ): Promise<{ total: number; bookings: Partial<IBooking>[] }> {
