@@ -2,7 +2,7 @@ import { IBooking } from '../../../database/models/Booking.model';
 import { IAny } from '../../../shared/utils/helpers';
 
 export interface IBookingRepository {
-    newBooking(payload: Partial<IBooking>): Promise<Partial<IBooking>>;
+    newBooking(payload: Partial<IBooking>): Promise<void>;
 
     retrieveOne(bookingUUID: string): Promise<Partial<IBooking> | null>;
 

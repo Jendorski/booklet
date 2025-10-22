@@ -11,6 +11,7 @@ import BookingModel, {
 } from '../../../database/models/Booking.model';
 import { IAny, queryBuilder } from '../../../shared/utils/helpers';
 import { CachePrefix } from '../../../cache/CachePrefix';
+import { CustomException } from '../../../shared/exceptions/CustomException';
 
 @injectable()
 export class BookingRepository implements IBookingRepository {
@@ -152,9 +153,7 @@ export class BookingRepository implements IBookingRepository {
         }
     };
 
-    newBooking = async (
-        payload: Partial<IBooking>
-    ): Promise<Partial<IBooking>> => {
+    newBooking = async (payload: Partial<IBooking>): Promise<void> => {
         const newBooking: IBooking = {
             reference: payload.reference as string,
             apartmentUUID: payload.apartmentUUID as string,
@@ -173,7 +172,10 @@ export class BookingRepository implements IBookingRepository {
             await BookingModel(sql).create(newBooking, { transaction });
         };
 
-        await this.dbConnect.executeTransaction(addProcess);
+        const resp = await this.dbConnect.executeTransaction(addProcess);
+        if (resp.error) {
+            throw new CustomException(resp.message);
+        }
     };
 
     truncate = async (): Promise<void> => {
