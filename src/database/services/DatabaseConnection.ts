@@ -59,6 +59,7 @@ export class DatabaseConnection implements IDatabaseConnection {
     async getSecret(secretVersionId: string = 'latest'): Promise<string> {
         try {
             this.secretClient = this.initiateSecretManager();
+            console.log({ secretClient: this.secretClient });
 
             const name = this.secretClient.secretVersionPath(
                 this.projectId,
@@ -67,11 +68,13 @@ export class DatabaseConnection implements IDatabaseConnection {
             );
 
             const [version] = await this.secretClient.accessSecretVersion({
-                name: name // 'projects/264795560183/secrets/dev-postgres-creds',
+                name: name
             });
+            console.log({ version });
 
             // Extract the secret payload
             const secretPayload = version.payload?.data;
+            console.log({ secretPayload });
             if (!secretPayload) {
                 throw new CustomException('Secret payload is empty');
             }
@@ -80,6 +83,7 @@ export class DatabaseConnection implements IDatabaseConnection {
             const secret = Buffer.from(secretPayload as Uint8Array).toString(
                 'utf8'
             );
+            console.log({ secret });
             return secret;
         } catch (error) {
             console.error(`Error accessing secret ${this.secretName}:`, error);
@@ -126,9 +130,11 @@ export class DatabaseConnection implements IDatabaseConnection {
         try {
             // Retrieve secret
             const secretValue = await this.getSecret();
+            console.log({ secretValue });
 
             // Parse credentials
             const credentials = this.parseCredentials(secretValue);
+            console.log({ credentials });
 
             // Create connection pool
             this.sequelize = new Sequelize({
@@ -156,6 +162,7 @@ export class DatabaseConnection implements IDatabaseConnection {
                     timeout: 3000
                 }
             });
+            console.log({ credentials });
 
             await this.sequelize.authenticate({
                 retry: { max: 3 }

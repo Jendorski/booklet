@@ -1,6 +1,0 @@
-services:
-    backend_cache:
-
-networks:
-    backend_net:
-        driver: bridge
