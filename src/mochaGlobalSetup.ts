@@ -5,9 +5,9 @@ import { registerCacheComponents } from './cache/registerCacheComponents';
 import { registerComponents } from './registerComponents';
 import { Logger } from './shared/logger/winston';
 
-export function mochaGlobalSetup() {
+export async function mochaGlobalSetup() {
     Logger.warn('mochaGlobalSetup');
-    registerComponents(true)
+    await registerComponents(true)
         .then(() => {
             registerSharedComponents();
             registerCacheComponents();

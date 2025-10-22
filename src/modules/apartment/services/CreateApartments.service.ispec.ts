@@ -2,7 +2,7 @@ import { container } from 'tsyringe';
 import { CreateUserRepository } from '../../user/repositories/CreateUser.repository';
 import { CreateApartmentService } from './CreateApartments.service';
 import { UserComponents } from '../../user/constants/UserComponent';
-import { registerComponents } from '../../../registerComponents';
+// import { registerComponents } from '../../../registerComponents';
 import { ApartmentComponents } from '../constants/ApartmentComponents';
 import { JWTService } from '../../../shared/jwt/JWTService';
 import { Components } from '../../../shared/constants/Components';
@@ -18,7 +18,7 @@ describe('Add Apartment Service', () => {
     let user: Partial<IUser>;
 
     before(async () => {
-        await registerComponents(false);
+        //await registerComponents(false);
 
         jwtService = container.resolve<JWTService>(Components.JWTService);
 
