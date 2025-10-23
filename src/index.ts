@@ -83,16 +83,6 @@ server.use(
             if (config.get('ENV') !== 'production') {
                 callback(null, origin);
             }
-            //When we go to prod, we will revisit this
-            // else {
-            //     const targetDomain = 'settle.com';
-            //     const validDomain = isSubdomain(origin, targetDomain);
-            //     if (validDomain) {
-            //         callback(null, origin);
-            //     } else {
-            //         callback(null, false);
-            //     }
-            // }
         },
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
         preflightContinue: true,

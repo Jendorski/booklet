@@ -63,8 +63,9 @@ export class LoginUserService implements ILoginUserService {
             );
         }
 
-        await this.cache.set({
-            key: `${CachePrefix.USER_JWT_TOKEN}/${user.uuid}`,
+        const key = `${CachePrefix.USER_JWT_TOKEN}/${user.uuid}`;
+        await this.cache.set<string>({
+            key,
             value: bearerToken,
             expiryInSeconds: 604800
         });

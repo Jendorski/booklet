@@ -82,10 +82,9 @@ A modern short-term apartment rental booking platform built with Node.js, TypeSc
     ```
 
 6. **Access the application**
-    - API: http://localhost:9088
-    - Swagger Documentation: http://localhost:9088/docs
-    - Queue Dashboard: http://localhost:9088/letts/qb
-    - Grafana: http://localhost:3010 (admin/admin)
+    - API: https://cloud-run-source-deploy-264795560183.europe-west1.run.app
+    - Swagger Documentation: https://cloud-run-source-deploy-264795560183.europe-west1.run.app/docs
+    - Queue Dashboard: https://cloud-run-source-deploy-264795560183.europe-west1.run.app/letts/qb
 
 ### Manual Setup (without Docker)
 
@@ -118,20 +117,14 @@ The project uses Mocha as the testing framework with Supertest for API testing.
 # Run all tests once
 pnpm test
 
-# Run tests with Docker (recommended)
-pnpm test:run
-
 # Run tests in watch mode for development
 pnpm build:test:watch
-
-# Run specific test files
-pnpm test -- --grep "booking"
 ```
 
 ### Test Structure
 
 -   **Integration Tests**: API endpoint testing with `.ispec.ts` files
--   **Service Tests**: Business logic testing with `.spec.ts` files (if present)
+-   **Service Tests**: Business logic testing with `.ispec.ts` files
 -   **Test Database**: Separate test environment with Docker
 
 ### Writing Tests
@@ -150,15 +143,14 @@ pnpm migrate        # Run database migrations
 pnpm swagger        # Generate Swagger/OpenAPI specs
 pnpm lint           # Run ESLint
 pnpm tsc            # Type check without emitting
-pnpm knip           # Find unused dependencies
 ```
 
 ## 🔧 API Documentation
 
 Interactive API documentation is available at `/docs` when the server is running:
 
--   **Swagger UI**: http://localhost:9088/docs
--   **OpenAPI Spec**: http://localhost:9088/swagger.json
+-   **Swagger UI**: https://cloud-run-source-deploy-264795560183.europe-west1.run.app/docs
+-   **Health Check**: https://cloud-run-source-deploy-264795560183.europe-west1.run.app/api/v1/health
 
 ## 🏗 Project Structure
 
@@ -189,4 +181,4 @@ src/
 
 ## 📄 License
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the CC0-1.0 License - see the [LICENSE](LICENSE) file for details.
