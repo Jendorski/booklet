@@ -4,6 +4,7 @@ import { UserComponents } from '../constants/UserComponent';
 import { IRegisterUserService } from '../interfaces/IRegisterUserService';
 import { validatePayload } from '../../../shared/middlewares/validatePayload';
 import { RegisterUserDTO } from '../dtos/RegisterUserDTO';
+import { ResponseDTO } from '../../../shared/dtos/ResponseDTO';
 
 @injectable()
 @Route('/auth/register')
@@ -21,6 +22,11 @@ export class RegisterUserController extends Controller {
         validatePayload({ targetClass: RegisterUserDTO, section: 'body' })
     ])
     async register(@Body() body: RegisterUserDTO) {
-        await this.registerUserService.registerUser(body);
+        const resp = await this.registerUserService.registerUser(body);
+
+        return ResponseDTO.success({
+            message: 'User registered successfully',
+            data: resp
+        });
     }
 }

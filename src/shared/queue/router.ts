@@ -12,6 +12,7 @@ import basicAuth from 'express-basic-auth';
 import { container } from 'tsyringe';
 import { Config } from '../config/Config';
 import { cacheConnection } from '../../cache/cacheConnection';
+import JOB_NAMES from './types';
 
 export const queueRouter = express.Router();
 
@@ -21,7 +22,10 @@ const BASIC_AUTH_CHALLENGE = config.get<string>(
 ) as string;
 
 const serverAdapter = new ExpressAdapter();
-const queues = ['email_queue', 'sms_queue'].map(
+const queues = [
+    JOB_NAMES.APARTMENT_CHECK_IN_PROCESSING,
+    JOB_NAMES.APARTMENT_CHECK_OUT_PROCESSING
+].map(
     (name) =>
         new BullMQAdapter(
             new Queue(name, {
@@ -38,7 +42,6 @@ queueRouter.use(
     basicAuth({
         challenge: true,
         users: { qs: BASIC_AUTH_CHALLENGE }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     }),
     serverAdapter.getRouter()
 );

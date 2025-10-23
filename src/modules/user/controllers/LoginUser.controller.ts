@@ -1,4 +1,4 @@
-import { Body, Controller, Middlewares, Post } from 'tsoa';
+import { Body, Controller, Middlewares, Post, Route, Tags } from 'tsoa';
 import { inject, singleton } from 'tsyringe';
 import { UserComponents } from '../constants/UserComponent';
 import { ILoginUserService } from '../interfaces/ILoginUserService';
@@ -7,6 +7,8 @@ import { LoginUserDTO } from '../dtos/LoginUserDTO';
 import { ResponseDTO } from '../../../shared/dtos/ResponseDTO';
 
 @singleton()
+@Route('/auth/login')
+@Tags('Authentication')
 export class LoginUserController extends Controller {
     constructor(
         @inject(UserComponents.LoginUserService)
