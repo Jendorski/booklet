@@ -36,20 +36,3 @@ export function errorMiddlewareFn() {
         });
     };
 }
-
-export const handleBodyParserError = () => {
-    return function errorParser(
-        errE: Error,
-        req: Request,
-        _res: Express.Response,
-        next: NextFunction
-    ) {
-        next(
-            new CustomException(
-                'Internal Server Error',
-                httpStatus.INTERNAL_SERVER_ERROR,
-                [{ error: JSON.stringify(errE) }]
-            )
-        );
-    };
-};

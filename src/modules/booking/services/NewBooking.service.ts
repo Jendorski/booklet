@@ -14,7 +14,7 @@ import {
 import { generateCode, generateReference } from '../../../shared/utils/helpers';
 import { Components } from '../../../shared/constants/Components';
 import { IQueueService } from '../../../shared/queue/interfaces/IQueueService';
-import { JOB_NAMES } from '../../../shared/queue/types';
+import JOB_NAMES from '../../../shared/queue/types';
 
 @singleton()
 export class NewBookingService implements INewBookingService {

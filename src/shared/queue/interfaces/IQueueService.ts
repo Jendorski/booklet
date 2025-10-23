@@ -1,10 +1,4 @@
 import { BaseJobOptions, Job, Queue, QueueEvents } from 'bullmq';
-import { JOB_NAMES } from '../types';
-import { IAny } from '../../utils/helpers';
-export interface IQueueProps {
-    type: JOB_NAMES;
-    props: Record<string, IAny>;
-}
 export interface IQueueService {
     create<T>(props: {
         name: string;

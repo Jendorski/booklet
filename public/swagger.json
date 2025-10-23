@@ -262,7 +262,6 @@
 				"enum": [
 					"gas_cooker",
 					"air_conditioning",
-					"water_heater",
 					"inverter",
 					"car_garage",
 					"washer",
