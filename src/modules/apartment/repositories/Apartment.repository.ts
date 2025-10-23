@@ -1,15 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Op, QueryTypes, sql, Transaction } from '@sequelize/core';
+import { QueryTypes, Transaction } from '@sequelize/core';
 import ApartmentModel, {
     IApartment,
-    IApartmentAmenities
+    IApartmentAmenities,
+    IApartmentStatus
 } from '../../../database/models/Apartment.model';
 import { IApartmentRepository } from '../interfaces/IApartmentRepository';
 import { inject, injectable } from 'tsyringe';
 import { DatabaseComponents } from '../../../database/constants/DatabaseComponents';
 import { IDatabaseConnection } from '../../../database/interfaces/IDatabaseConnection';
 import { CustomException } from '../../../shared/exceptions/CustomException';
-import { queryBuilder } from '../../../shared/utils/helpers';
+import {
+    cachePagination,
+    IAny,
+    queryBuilder
+} from '../../../shared/utils/helpers';
 import { CacheComponents } from '../../../cache/cacheComponents';
 import { ICache } from '../../../cache/interfaces/ICache';
 import { CachePrefix } from '../../../cache/CachePrefix';
@@ -22,6 +28,34 @@ export class ApartmentRepository implements IApartmentRepository {
         @inject(CacheComponents.Cache)
         private readonly cache: ICache
     ) {}
+
+    updateOne = async (props: {
+        apartmentUUID: string;
+        update: Partial<IApartment>;
+    }): Promise<void> => {
+        const { apartmentUUID, update } = props;
+
+        const apartment = await this.findOne({ uuid: apartmentUUID });
+        if (!apartment) return;
+
+        const updatedApartment: Partial<IApartment> = {
+            ...update
+        };
+
+        const sql = this.dbConnect.instance();
+
+        const updateProcess = async (transaction: Transaction) => {
+            await ApartmentModel(sql).update(updatedApartment, {
+                where: { uuid: apartmentUUID },
+                transaction
+            });
+        };
+
+        const resp = await this.dbConnect.executeTransaction(updateProcess);
+        if (resp.error) {
+            throw new CustomException(resp.message);
+        }
+    };
 
     retrieve = async (props: {
         page: number;
@@ -59,20 +93,21 @@ export class ApartmentRepository implements IApartmentRepository {
                 amenities
             });
 
-            void this.toCache({ cachedKey, records: fromDB.records });
+            await this.toCache({ cachedKey, records: fromDB.records });
 
             return fromDB;
         } else {
-            const start = page === 1 ? page - 1 : limit * (page - 1);
-            const stop = page === 1 ? limit - 1 : start + (limit - 1);
+            const { start, stop } = cachePagination({ page, limit });
+            console.log({ hasCached: { start, stop } });
 
             const cached = await this.cache.lRange<Partial<IApartment>>({
                 key: cachedKey,
                 start,
                 stop
             });
+            console.log({ cached });
 
-            if (cached.length === 0) {
+            if (cached.length !== limit) {
                 const fromDB = await this.find({
                     page,
                     limit,
@@ -83,7 +118,7 @@ export class ApartmentRepository implements IApartmentRepository {
                     description,
                     amenities
                 });
-                void this.toCache({ cachedKey, records: fromDB.records });
+                await this.toCache({ cachedKey, records: fromDB.records });
 
                 return fromDB;
             }
@@ -115,21 +150,18 @@ export class ApartmentRepository implements IApartmentRepository {
         const cached = await this.cache.get<Partial<IApartment>>(cachedKey);
         if (cached) return cached;
 
+        const { query } = queryBuilder({
+            uuid,
+            hostName,
+            hostUUID,
+            title,
+            description
+        });
+
         const exists = await ApartmentModel(this.dbConnect.instance()).findOne({
-            where: {
-                [Op.or]: [
-                    sql.where(sql.cast(sql.col('uuid'), 'TEXT'), {
-                        [Op.iLike]: `%${uuid}%`
-                    }),
-                    sql.where(sql.cast(sql.col('hostUUID'), 'TEXT'), {
-                        [Op.iLike]: `%${hostUUID}%`
-                    }),
-                    { hostName: { [Op.like]: `%${hostName}%` } },
-                    { title: { [Op.like]: title } },
-                    { description: { [Op.like]: `%${description}%` } }
-                ]
-            },
-            raw: true
+            where: query.where,
+            raw: true,
+            limit: 1
         });
         if (!exists) return null;
 
@@ -143,20 +175,19 @@ export class ApartmentRepository implements IApartmentRepository {
     };
     count = async (apartment: Partial<IApartment>): Promise<number> => {
         const { uuid, hostName, hostUUID, title, description } = apartment;
+        const { query } = queryBuilder(
+            {
+                uuid,
+                hostName,
+                hostUUID,
+                title,
+                description
+            },
+            [],
+            false
+        );
         return await ApartmentModel(this.dbConnect.instance()).count({
-            where: {
-                [Op.or]: [
-                    sql.where(sql.cast(sql.col('uuid'), 'TEXT'), {
-                        [Op.iLike]: `%${uuid}%`
-                    }),
-                    sql.where(sql.cast(sql.col('hostUUID'), 'TEXT'), {
-                        [Op.iLike]: `%${hostUUID}%`
-                    }),
-                    { hostName: { [Op.like]: `%${hostName}%` } },
-                    { title: { [Op.like]: title } },
-                    { description: { [Op.like]: `%${description}%` } }
-                ]
-            }
+            where: query.where
         });
     };
     find = async (props: {
@@ -189,7 +220,9 @@ export class ApartmentRepository implements IApartmentRepository {
         return { total: count, records };
     };
 
-    add = async (props: { apartment: Partial<IApartment> }): Promise<void> => {
+    add = async (props: {
+        apartment: Partial<IApartment>;
+    }): Promise<{ apartmentUUID: string }> => {
         const { apartment } = props;
 
         delete apartment.uuid;
@@ -204,20 +237,29 @@ export class ApartmentRepository implements IApartmentRepository {
             bathrooms: apartment.bathrooms as number,
             bedrooms: apartment.bedrooms as number,
             toilets: apartment.toilets as number,
-            location: apartment.location as string
+            location: apartment.location as string,
+            images: apartment.images as string[],
+            cautionFee: apartment.cautionFee as number,
+            status: apartment.status as IApartmentStatus
         };
 
+        let aprt: IAny;
         const creationProcess = async (transaction: Transaction) => {
-            await ApartmentModel(this.dbConnect.instance()).create(create, {
-                transaction,
-                isNewRecord: true
-            });
+            aprt = await ApartmentModel(this.dbConnect.instance()).create(
+                create,
+                {
+                    transaction,
+                    isNewRecord: true
+                }
+            );
         };
 
         const resp = await this.dbConnect.executeTransaction(creationProcess);
         if (resp.error) {
             throw new CustomException(resp.message);
         }
+
+        return { apartmentUUID: aprt.uuid as string };
     };
 
     truncate = async (): Promise<void> => {

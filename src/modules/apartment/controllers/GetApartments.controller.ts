@@ -1,11 +1,11 @@
 import {
     Controller,
     Get,
-    Middlewares,
     Queries,
     Route,
     Tags,
-    Request
+    Request,
+    Middlewares
 } from 'tsoa';
 import { inject, injectable } from 'tsyringe';
 import { ApartmentComponents } from '../constants/ApartmentComponents';
@@ -14,6 +14,9 @@ import { CustomException } from '../../../shared/exceptions/CustomException';
 import httpStatus from 'http-status';
 import { CustomRequest } from '../../../shared/interfaces/CustomRequest';
 import { ResponseDTO } from '../../../shared/dtos/ResponseDTO';
+import { IApartmentAmenities } from '../../../database/models/Apartment.model';
+import { isEmpty } from '../../../shared/utils/helpers';
+import { RateLimitMiddleware } from '../../../shared/middlewares/rateLimitMiddleware';
 
 @injectable()
 @Route('/apartments')
@@ -27,16 +30,26 @@ export class GetApartmentsController extends Controller {
     }
 
     @Get('')
-    @Middlewares([])
-    async get(
+    @Middlewares([RateLimitMiddleware.flexibleRateLimit(1000)])
+    async getApartments(
         @Request() req: CustomRequest,
-        @Queries() queries: { page: number; limit: number }
+        @Queries()
+        queries: {
+            page?: number;
+            limit?: number;
+            uuid?: string;
+            hostUUID?: string;
+            title?: string;
+            minPrice?: string;
+            maxPrice?: string;
+            amenities?: string[];
+        }
     ) {
-        const { page, limit } = queries;
+        const { limit, amenities, maxPrice, minPrice } = queries;
 
         const ipAddress = req.ip;
 
-        if (limit > 5) {
+        if (limit && limit > 5) {
             throw new CustomException(
                 'limit cannot be more than 5',
                 httpStatus.UNPROCESSABLE_ENTITY
@@ -44,9 +57,15 @@ export class GetApartmentsController extends Controller {
         }
 
         const resp = await this.aptRepo.retrieve({
-            page,
-            limit,
-            ipAddress
+            ...queries,
+            ipAddress,
+            amenities: amenities as IApartmentAmenities[],
+            maxPrice:
+                maxPrice && !isEmpty(maxPrice)
+                    ? Number.parseFloat(maxPrice)
+                    : 0,
+            minPrice:
+                minPrice && !isEmpty(minPrice) ? Number.parseFloat(minPrice) : 0
         });
 
         return ResponseDTO.success({

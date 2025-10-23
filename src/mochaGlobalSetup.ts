@@ -12,7 +12,8 @@ export async function mochaGlobalSetup() {
             registerSharedComponents();
             registerCacheComponents();
         })
-        .catch((err: Error) => {
+        .catch((err: unknown) => {
+            console.log({ err });
             Logger.error(
                 `registerComponents.failed -> ${JSON.stringify({ err })}`
             );

@@ -21,5 +21,10 @@ export interface IBookingRepository {
         limit: number;
     }): Promise<{ total: number; bookings: Partial<IBooking>[] }>;
 
+    updateOne(props: {
+        reference: string;
+        update: Partial<IBooking>;
+    }): Promise<void>;
+
     truncate(): Promise<void>;
 }

@@ -8,6 +8,7 @@ import { Components } from '../../../shared/constants/Components';
 import { ApartmentRepository } from '../repositories/Apartment.repository';
 import expect from 'expect';
 import { IUser } from '../../../database/models/User.model';
+import { registerSharedComponents } from '../../../shared/registerSharedComponents';
 
 describe('Add Apartment Service', () => {
     let createUserRepository: CreateUserRepository;
@@ -17,6 +18,7 @@ describe('Add Apartment Service', () => {
     let user: Partial<IUser>;
 
     before(async () => {
+        registerSharedComponents();
         jwtService = container.resolve<JWTService>(Components.JWTService);
 
         apartmentRepo = container.resolve<ApartmentRepository>(
@@ -42,7 +44,6 @@ describe('Add Apartment Service', () => {
     });
 
     afterEach(async () => {
-        //
         await apartmentRepo.truncate();
     });
 
@@ -64,7 +65,8 @@ describe('Add Apartment Service', () => {
                 bedrooms: 3,
                 bathroom: 3,
                 pricePerNight: 10000,
-                location: 'Oregun, Ikeja'
+                location: 'Oregun, Ikeja',
+                cautionFee: 30000
             }
         });
 
@@ -79,7 +81,8 @@ describe('Add Apartment Service', () => {
                     bedrooms: 3,
                     bathroom: 3,
                     pricePerNight: 10000,
-                    location: 'Oregun, Ikeja'
+                    location: 'Oregun, Ikeja',
+                    cautionFee: 30000
                 }
             })
         ).rejects.toThrow(
@@ -99,7 +102,8 @@ describe('Add Apartment Service', () => {
                     bedrooms: 3,
                     bathroom: 3,
                     pricePerNight: 10000,
-                    location: 'Oregun, Ikeja'
+                    location: 'Oregun, Ikeja',
+                    cautionFee: 30000
                 }
             })
         ).resolves.toStrictEqual(undefined);

@@ -62,17 +62,8 @@ export const randomFixedInteger = (length: number) => {
     return rand;
 };
 
-export const emailCode = (length: number) => {
-    let result = '';
-    const characters =
-        '0123456789987654321012345678987654321012345678909876543210012345678998765432101234567898765432101234567890987654321012345678909876543212345678909876543212345678900098876543212345678901234567890';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i++) {
-        result += characters.charAt(
-            Math.floor(Math.random() * charactersLength)
-        );
-    }
-    return result;
+export const randomNumberBetween = (min = 0, max = 20) => {
+    return Math.ceil(Math.random() * (max - min) + min);
 };
 
 export const splitEmail = (email: string) => {
@@ -216,7 +207,7 @@ export interface QuerySubstance {
 
 export const queryBuilder = (
     query: Record<string, IAny>,
-    excludedAttributes: string[],
+    excludedAttributes?: string[],
     or = false
 ) => {
     const andedArray: unknown[] = [];

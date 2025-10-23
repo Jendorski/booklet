@@ -1,14 +1,15 @@
 import { Transaction } from '@sequelize/core';
 import {
     IApartment,
-    IApartmentAmenities
+    IApartmentAmenities,
+    IApartmentFilters
 } from '../../../database/models/Apartment.model';
 
 export interface IApartmentRepository {
     add(props: {
         apartment: Partial<IApartment>;
         transaction?: Transaction;
-    }): Promise<void>;
+    }): Promise<{ apartmentUUID: string }>;
 
     findOne(
         apartment: Partial<IApartment>
@@ -27,16 +28,14 @@ export interface IApartmentRepository {
         amenities?: IApartmentAmenities[];
     }): Promise<{ total: number; records: Partial<IApartment>[] }>;
 
-    retrieve(props: {
-        page: number;
-        limit: number;
-        ipAddress?: string;
-        uuid?: string;
-        hostUUID?: string;
-        title?: string;
-        description?: string;
-        amenities?: IApartmentAmenities[];
-    }): Promise<{ total: number; records: Partial<IApartment>[] }>;
+    retrieve(
+        props: IApartmentFilters
+    ): Promise<{ total: number; records: Partial<IApartment>[] }>;
+
+    updateOne(props: {
+        apartmentUUID: string;
+        update: Partial<IApartment>;
+    }): Promise<void>;
 
     truncate(): Promise<void>;
 }

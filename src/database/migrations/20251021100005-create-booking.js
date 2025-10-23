@@ -32,7 +32,10 @@ module.exports = {
             bookingDate: {
                 type: DataTypes.DATE
             },
-            checkoutDate: {
+            checkInDate: {
+                type: DataTypes.DATE
+            },
+            checkOutDate: {
                 type: DataTypes.DATE
             },
             numberOfNights: {
@@ -43,6 +46,9 @@ module.exports = {
             },
             cautionFee: {
                 type: DataTypes.INTEGER
+            },
+            bookingCost: {
+                type: DataTypes.FLOAT
             },
             createdAt: {
                 allowNull: false,

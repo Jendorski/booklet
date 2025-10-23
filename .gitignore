@@ -66,6 +66,10 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+/src/routes.ts
+
+/public
+
 # dotenv environment variable files
 .env
 .env.*

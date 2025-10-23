@@ -9,11 +9,26 @@ export interface IApartment {
     description: string;
     location: string;
     pricePerNight: number;
+    cautionFee: number;
     bathrooms: number;
     bedrooms: number;
     toilets: number;
     hostUUID: string;
     amenities: IApartmentAmenities[];
+    images: string[];
+    status: IApartmentStatus;
+}
+
+export interface IApartmentFilters {
+    page?: number;
+    limit?: number;
+    ipAddress?: string;
+    uuid?: string;
+    hostUUID?: string;
+    title?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    amenities?: IApartmentAmenities[];
 }
 
 export enum IApartmentAmenities {
@@ -21,14 +36,19 @@ export enum IApartmentAmenities {
     AIR_CONDITIONING = 'air_conditioning',
     WATER_HEATER = 'water_heater',
     INVERTER = 'inverter',
-    CAR_GARAGE = 'car_garage'
+    CAR_GARAGE = 'car_garage',
+    WASHER = 'washer',
+    DRYER = 'dryer',
+    WIFI = 'wifi',
+    GYM = 'gym',
+    SWIMMING_POOL = 'swimming_pool',
+    KITCHEN = 'kitchen',
+    TV = 'tv'
 }
 
 export enum IApartmentStatus {
-    PENDING = 'pending',
     AVAILABLE = 'available',
-    BOOKED = 'booked',
-    UNAVAILABLE = 'unavailable'
+    BOOKED = 'booked'
 }
 
 const ApartmentModel = (sequelize: Sequelize) => {
@@ -40,11 +60,13 @@ const ApartmentModel = (sequelize: Sequelize) => {
         declare description: string;
         declare location: string;
         declare pricePerNight: number;
+        declare cautionFee: number;
         declare bedrooms: number;
         declare bathrooms: number;
         declare toilets: number;
         declare status: string;
         declare amenities: string[];
+        declare images: string[];
 
         static associate(models: Model) {
             //One Apartment has many bookings
@@ -86,13 +108,17 @@ const ApartmentModel = (sequelize: Sequelize) => {
             status: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: IApartmentStatus.PENDING
+                defaultValue: IApartmentStatus.AVAILABLE
             },
             location: {
                 type: DataTypes.STRING,
                 allowNull: false
             },
             pricePerNight: {
+                type: DataTypes.FLOAT,
+                allowNull: false
+            },
+            cautionFee: {
                 type: DataTypes.FLOAT,
                 allowNull: false
             },
@@ -111,6 +137,9 @@ const ApartmentModel = (sequelize: Sequelize) => {
                 defaultValue: 1
             },
             amenities: {
+                type: DataTypes.ARRAY(DataTypes.STRING)
+            },
+            images: {
                 type: DataTypes.ARRAY(DataTypes.STRING)
             }
         },

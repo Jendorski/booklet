@@ -2,22 +2,27 @@ import 'reflect-metadata';
 import { ValidateEnvs } from './shared/utils/validateEnvs';
 import { registerComponents } from './registerComponents';
 import { Logger } from './shared/logger/winston';
+import { server } from '.';
+import { container } from 'tsyringe';
+import { Config } from './shared/config/Config';
 
+const config = container.resolve(Config);
 ValidateEnvs();
 
 registerComponents(true)
     .then((sql) => {
-        //
-        Logger.warn('We are getting there!');
+        server.listen(config.get<number>('PORT', 8000), () => {
+            Logger.info('server.running');
+        });
     })
-    .catch((err: Error) => {
+    .catch((err: unknown) => {
+        console.log({ err });
         Logger.error(`registerComponents.failed -> ${JSON.stringify({ err })}`);
     });
 
 process.on('uncaughtException', (err) => {
     Logger.warn('Uncaught Exception!! Shutting down process..');
     Logger.error(`err.stack -> ${JSON.stringify(err)}`);
-    Logger.error(`err.stack -> ${JSON.stringify(err.stack)}`);
 });
 
 process.on('unhandledRejection', (err: unknown) => {

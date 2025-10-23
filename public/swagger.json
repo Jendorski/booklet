@@ -51,17 +51,141 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Partial_IApartment_": {
-				"properties": {},
-				"type": "object",
-				"description": "Make all properties in T optional"
-			},
 			"ResponseStatus": {
 				"enum": [
 					"success",
 					"error"
 				],
 				"type": "string"
+			},
+			"ResponseDTO__reference-string--totalAmountToPay-number__": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"properties": {
+							"totalAmountToPay": {
+								"type": "number",
+								"format": "double"
+							},
+							"reference": {
+								"type": "string"
+							}
+						},
+						"required": [
+							"totalAmountToPay",
+							"reference"
+						],
+						"type": "object"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"NewBookingDTO": {
+				"properties": {
+					"apartmentUUID": {
+						"type": "string"
+					},
+					"numberOfNights": {
+						"type": "number",
+						"format": "double"
+					},
+					"checkInDate": {
+						"type": "string"
+					},
+					"checkOutDate": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"apartmentUUID",
+					"numberOfNights",
+					"checkInDate",
+					"checkOutDate"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_IBooking_": {
+				"properties": {},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"PaginatedDataDTO_Partial_IBooking__": {
+				"properties": {
+					"data": {
+						"items": {
+							"$ref": "#/components/schemas/Partial_IBooking_"
+						},
+						"type": "array"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"limit": {
+						"type": "number",
+						"format": "double"
+					},
+					"first": {
+						"type": "boolean"
+					},
+					"last": {
+						"type": "boolean"
+					},
+					"total": {
+						"type": "number",
+						"format": "double"
+					},
+					"pages": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"data",
+					"page",
+					"limit",
+					"first",
+					"last",
+					"total",
+					"pages"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ResponseDTO_PaginatedDataDTO_Partial_IBooking___": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/PaginatedDataDTO_Partial_IBooking__"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_IApartment_": {
+				"properties": {},
+				"type": "object",
+				"description": "Make all properties in T optional"
 			},
 			"ResponseDTO__total-number--records-Partial_IApartment_-Array__": {
 				"properties": {
@@ -117,13 +241,37 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"ResponseDTO_unknown_": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IApartmentAmenities": {
 				"enum": [
 					"gas_cooker",
 					"air_conditioning",
 					"water_heater",
 					"inverter",
-					"car_garage"
+					"car_garage",
+					"washer",
+					"dryer",
+					"wifi",
+					"gym",
+					"swimming_pool",
+					"kitchen",
+					"tv"
 				],
 				"type": "string"
 			},
@@ -136,6 +284,10 @@
 						"type": "string"
 					},
 					"pricePerNight": {
+						"type": "number",
+						"format": "double"
+					},
+					"cautionFee": {
 						"type": "number",
 						"format": "double"
 					},
@@ -165,6 +317,7 @@
 					"title",
 					"description",
 					"pricePerNight",
+					"cautionFee",
 					"location",
 					"bedrooms",
 					"toilets",
@@ -223,9 +376,124 @@
 				}
 			}
 		},
+		"/health": {
+			"get": {
+				"operationId": "GetMessage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"date": {
+											"type": "string"
+										},
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"date",
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Health"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/booking/new": {
+			"post": {
+				"operationId": "NewBooking",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO__reference-string--totalAmountToPay-number__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Booking Management"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/NewBookingDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/booking/apartment/{apartmentUUID}": {
+			"get": {
+				"operationId": "ApartmentBookings",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO_PaginatedDataDTO_Partial_IBooking___"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Booking Management"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "apartmentUUID",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/apartments": {
 			"get": {
-				"operationId": "Get",
+				"operationId": "GetApartments",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -245,8 +513,59 @@
 				"parameters": [
 					{
 						"in": "query",
+						"name": "amenities",
+						"required": false,
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
+						}
+					},
+					{
+						"in": "query",
+						"name": "maxPrice",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "minPrice",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "title",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "hostUUID",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "uuid",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
 						"name": "limit",
-						"required": true,
+						"required": false,
 						"schema": {
 							"format": "double",
 							"type": "number"
@@ -255,7 +574,7 @@
 					{
 						"in": "query",
 						"name": "page",
-						"required": true,
+						"required": false,
 						"schema": {
 							"format": "double",
 							"type": "number"
@@ -304,7 +623,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/ResponseDTO_Partial_IApartment__"
+									"$ref": "#/components/schemas/ResponseDTO_unknown_"
 								}
 							}
 						}

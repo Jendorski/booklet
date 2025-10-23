@@ -1,7 +1,7 @@
 import {
     IsArray,
     IsDefined,
-    IsEnum,
+    // IsEnum,
     IsNumber,
     IsOptional,
     IsString,
@@ -24,15 +24,21 @@ export class AddApartmentDTO {
     description: string;
 
     @IsDefined({ message: 'pricePerNight is required' })
+    @IsNumber({}, { message: 'pricePerNight must be a number' })
     pricePerNight: number;
 
+    @IsDefined({ message: 'cautionFee is required' })
+    @IsNumber({}, { message: 'cautionFee must be a number' })
+    cautionFee: number;
+
     @IsDefined({ message: 'location is required' })
+    @IsString({ message: 'location must be a string' })
     location: string;
 
-    @IsOptional({ message: 'amenities is required' })
-    @IsEnum(IApartmentAmenities, {
-        message: `amenities is any of ${Object.values(IApartmentAmenities).join(',')}`
-    })
+    @IsOptional({})
+    // @IsEnum(IApartmentAmenities, {
+    //     message: `amenities is any of ${Object.values(IApartmentAmenities).join(',')}`
+    // })
     @IsArray({ message: 'amenities must be an array' })
     amenities?: IApartmentAmenities[];
 
