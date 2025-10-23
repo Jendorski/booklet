@@ -1,6 +1,7 @@
 # Booklet 🏠
 
-[![Node.js CI](https://github.com/Jendorski/booklet/workflows/Node.js%20CI/badge.svg)](https://github.com/Jendorski/booklet/actions)
+[![Pull Request Workflow](https://github.com/Jendorski/booklet/actions/workflows/pr.yml/badge.svg)](https://github.com/Jendorski/booklet/actions/workflows/pr.yml)
+[![Continuous Deployment](https://github.com/Jendorski/booklet/actions/workflows/deploy.yml/badge.svg?branch=main)](https://github.com/Jendorski/booklet/actions/workflows/deploy.yml)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20.0.0-brightgreen)](https://nodejs.org/)
 
