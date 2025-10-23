@@ -34,7 +34,6 @@ export interface IApartmentFilters {
 export enum IApartmentAmenities {
     GAS_COOKER = 'gas_cooker',
     AIR_CONDITIONING = 'air_conditioning',
-    WATER_HEATER = 'water_heater',
     INVERTER = 'inverter',
     CAR_GARAGE = 'car_garage',
     WASHER = 'washer',

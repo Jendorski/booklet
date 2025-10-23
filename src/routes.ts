@@ -138,7 +138,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IApartmentAmenities": {
         "dataType": "refEnum",
-        "enums": ["gas_cooker","air_conditioning","water_heater","inverter","car_garage","washer","dryer","wifi","gym","swimming_pool","kitchen","tv"],
+        "enums": ["gas_cooker","air_conditioning","inverter","car_garage","washer","dryer","wifi","gym","swimming_pool","kitchen","tv"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AddApartmentDTO": {

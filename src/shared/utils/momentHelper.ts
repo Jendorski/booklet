@@ -27,7 +27,7 @@ export type TimeUnit =
     | 'seconds'
     | 's';
 
-export type FormatUnit =
+type FormatUnit =
     | 'Do MMM'
     | 'Do MMM YYYY'
     | 'DD MMM'

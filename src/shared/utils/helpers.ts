@@ -8,48 +8,6 @@ import { Logger } from '../logger/winston';
 
 export type IAny = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
-export const formatObjectToString = (
-    param: string | Record<string, IAny>
-): string => {
-    if (typeof param === 'string') {
-        return param;
-    }
-
-    if (param instanceof Error) {
-        return param.stack ? param.stack : JSON.stringify(param);
-    }
-
-    return JSON.stringify(param);
-};
-
-const awaitTimeout = (delay: number, reason: string) =>
-    new Promise((resolve, reject) =>
-        setTimeout(() => {
-            reason.length > 0 ? resolve(true) : reject(reason);
-        }, delay)
-    );
-
-export const getBoolean = (value: IAny) => {
-    switch (value) {
-        case true:
-        case 'true':
-        case 1:
-        case 'ON':
-        case 'on':
-        case 'yes':
-        case 'YES':
-            return true;
-        default:
-            return false;
-    }
-};
-
-export const awaitOrTimeout = (
-    promise: Promise<IAny>,
-    delay: number,
-    reason = 'Timed out'
-) => Promise.race([promise, awaitTimeout(delay, reason)]);
-
 export const randomFixedInteger = (length: number) => {
     const power10minus1 = 10 ** (length - 1);
     const power10 = 10 ** length;
@@ -64,33 +22,6 @@ export const randomFixedInteger = (length: number) => {
 
 export const randomNumberBetween = (min = 0, max = 20) => {
     return Math.ceil(Math.random() * (max - min) + min);
-};
-
-export const splitEmail = (email: string) => {
-    const splits: string[] = email.split('@');
-
-    const name: string = splits[0];
-
-    const domainName: string = splits[1];
-
-    const regEx = /[(,),.,/,\-,_,!,%,#,+,-,;,,',",,*,^,$,`,~,@, ,]/g;
-    const boolean = regEx.test(name);
-
-    let newName = name;
-
-    if (boolean) {
-        newName = name.replace(regEx, '');
-    }
-
-    return newName + '@' + domainName;
-};
-
-export const toLowerTrim = (str: string) => {
-    return str ? String(str).toLowerCase().trim() : '';
-};
-
-export const toUpperTrim = (str: string) => {
-    return str ? String(str).toUpperCase().trim() : '';
 };
 
 //To be noted, this does not work for Dates as objects
@@ -120,52 +51,6 @@ export const generateCode = (length: number) => {
     return result;
 };
 
-export const regexEmail = (email: string) => {
-    if (!email.includes('@')) {
-        throw new CustomException('Invalid email format: missing @ symbol');
-    }
-
-    const [localPart, domain] = email.split('@');
-
-    if (!localPart || !domain) {
-        throw new CustomException(
-            'Invalid email format: empty local part or domain'
-        );
-    }
-
-    // Make existing dots optional in local part
-    const emailRegex = /[(,),.,/,\-,_,!,%,#,*,^,$,`,~,@, ,]/;
-    const flexibleLocalPart = localPart.replace(emailRegex, '\\.?');
-
-    // Escape dots in domain
-    const escapedDomain = domain.replace(/\./g, '\\.');
-
-    return `^${flexibleLocalPart}@${escapedDomain}$`;
-};
-
-export const buildEmailRegex = (email: string): RegExp => {
-    if (!email.includes('@')) {
-        throw new Error('Invalid email format: missing @ symbol');
-    }
-
-    const [localPart, domain] = email.toLowerCase().split('@');
-    if (!localPart || !domain) {
-        throw new Error('Invalid email format: empty local part or domain');
-    }
-
-    // Strip out "+" aliases and dots for matching purposes
-    const baseLocal = localPart.split('+')[0].replace(/\./g, '');
-
-    // Escape the domain for regex
-    const escapedDomain = domain.replace(/\./g, '\\.');
-
-    // Build a regex that matches any email that normalizes to the same
-    return new RegExp(
-        `^${baseLocal.replace(/([.*+?^${}()|[\]\\])/g, '\\$1')}[+\\w.-]*@${escapedDomain}$`,
-        'i'
-    );
-};
-
 export const generateReference = (data: string) => {
     const generateNumber = randomFixedInteger(12);
 
@@ -191,7 +76,7 @@ export const cachePagination = (props: {
     return { start, stop };
 };
 
-export interface QuerySubstance {
+interface QuerySubstance {
     where: Record<string, unknown>;
     attributes?: Record<string, IAny>; //IAny[];
     include?: Record<string, unknown>[];
