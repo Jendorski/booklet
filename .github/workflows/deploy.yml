@@ -1,8 +1,8 @@
 name: Deploy to Cloud Run
 
 env:
-  SERVICE_NAME: booklet-service-assement
-  DOCKER_IMAGE_URL: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/booklet-service-assement/booklet-service-assement
+  SERVICE_NAME: cloud-run-source-deploy
+  DOCKER_IMAGE_URL: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/cloud-run-source-deploy
 
 on:
   push:
