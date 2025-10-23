@@ -36,6 +36,10 @@ module.exports = {
                 type: DataTypes.FLOAT,
                 allowNull: false
             },
+            cautionFee: {
+                type: DataTypes.FLOAT,
+                allowNull: false
+            },
             bedrooms: {
                 type: DataTypes.INTEGER,
                 defaultValue: 1
@@ -53,6 +57,9 @@ module.exports = {
                 defaultValue: 'pending'
             },
             amenities: {
+                type: DataTypes.ARRAY(DataTypes.STRING)
+            },
+            images: {
                 type: DataTypes.ARRAY(DataTypes.STRING)
             },
             createdAt: {

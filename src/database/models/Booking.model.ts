@@ -5,7 +5,6 @@ import defineUserModel from './User.model';
 export enum IBookingStatus {
     SCHEDULED = 'scheduled',
     ONGOING = 'ongoing',
-    EXPIRED = 'expired',
     COMPLETED = 'completed'
 }
 
@@ -18,13 +17,22 @@ export interface IBooking {
     totalAmountPaid: number;
     cautionFee: number;
     numberOfNights: number;
-    checkoutDate: string | Date;
+    bookingCost: number;
+    checkOutDate: string | Date;
+    checkInDate: string | Date;
     status: IBookingStatus;
+}
+
+export interface IBookingsFilters {
+    page: number;
+    limit: number;
+    apartmentUUID: string;
+    guestUUID: string;
 }
 
 const BookingModel = (sequelize: Sequelize) => {
     class Booking extends Model<IBooking> {
-        declare uuid: number;
+        declare uuid: string;
         declare apartmentUUID: string;
         declare reference: string;
         declare guestUUID: string;
@@ -34,6 +42,7 @@ const BookingModel = (sequelize: Sequelize) => {
         declare totalAmountPaid: number;
         declare cautionFee: number;
         declare status: string;
+        declare checkinDate: string | Date;
 
         static associate(models: Model) {
             // define association here
@@ -75,9 +84,16 @@ const BookingModel = (sequelize: Sequelize) => {
                 type: DataTypes.DATE,
                 allowNull: false
             },
-            checkoutDate: {
+            checkInDate: {
                 type: DataTypes.DATE,
                 allowNull: false
+            },
+            checkOutDate: {
+                type: DataTypes.DATE,
+                allowNull: false
+            },
+            bookingCost: {
+                type: DataTypes.INTEGER
             },
             numberOfNights: {
                 type: DataTypes.INTEGER,

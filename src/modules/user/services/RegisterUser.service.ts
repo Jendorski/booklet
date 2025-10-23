@@ -35,7 +35,9 @@ export class RegisterUserService implements IRegisterUserService {
             throw new CustomException('password does not match');
         }
 
-        const exists = await this.userRepo.findOne({ email });
+        const exists = await this.userRepo.findOne({
+            email: email.toLowerCase()
+        });
 
         if (exists) {
             throw new CustomException(
@@ -55,7 +57,7 @@ export class RegisterUserService implements IRegisterUserService {
 
         const newUser: Partial<IUser> = {
             fullName,
-            email,
+            email: email.toLowerCase(),
             emailVerified: true,
             password: hash,
             type

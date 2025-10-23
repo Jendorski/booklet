@@ -6,6 +6,12 @@ import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { RegisterUserController } from './modules/user/controllers/RegisterUser.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { HealthEndpointController } from './modules/health/controller/HealthEndpoint.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { NewBookingController } from './modules/booking/controllers/NewBooking.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { BookingsForAnApartmentController } from './modules/booking/controllers/BookingsForAnApartment.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { GetApartmentsController } from './modules/apartment/controllers/GetApartments.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { GetApartmentController } from './modules/apartment/controllers/GetApartment.controller';
@@ -40,14 +46,64 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Partial_IApartment_": {
+    "ResponseStatus": {
+        "dataType": "refEnum",
+        "enums": ["success","error"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ResponseDTO__reference-string--totalAmountToPay-number__": {
+        "dataType": "refObject",
+        "properties": {
+            "status": {"ref":"ResponseStatus","required":true},
+            "message": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}],"required":true},
+            "data": {"dataType":"nestedObjectLiteral","nestedProperties":{"totalAmountToPay":{"dataType":"double","required":true},"reference":{"dataType":"string","required":true}},"required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "NewBookingDTO": {
+        "dataType": "refObject",
+        "properties": {
+            "apartmentUUID": {"dataType":"string","required":true},
+            "numberOfNights": {"dataType":"double","required":true},
+            "checkInDate": {"dataType":"string","required":true},
+            "checkOutDate": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_IBooking_": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ResponseStatus": {
-        "dataType": "refEnum",
-        "enums": ["success","error"],
+    "PaginatedDataDTO_Partial_IBooking__": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"array","array":{"dataType":"refAlias","ref":"Partial_IBooking_"},"required":true},
+            "page": {"dataType":"double","required":true},
+            "limit": {"dataType":"double","required":true},
+            "first": {"dataType":"boolean","required":true},
+            "last": {"dataType":"boolean","required":true},
+            "total": {"dataType":"double","required":true},
+            "pages": {"dataType":"double","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ResponseDTO_PaginatedDataDTO_Partial_IBooking___": {
+        "dataType": "refObject",
+        "properties": {
+            "status": {"ref":"ResponseStatus","required":true},
+            "message": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}],"required":true},
+            "data": {"ref":"PaginatedDataDTO_Partial_IBooking__","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_IApartment_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ResponseDTO__total-number--records-Partial_IApartment_-Array__": {
@@ -70,9 +126,19 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ResponseDTO_unknown_": {
+        "dataType": "refObject",
+        "properties": {
+            "status": {"ref":"ResponseStatus","required":true},
+            "message": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"undefined"}],"required":true},
+            "data": {"dataType":"any","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "IApartmentAmenities": {
         "dataType": "refEnum",
-        "enums": ["gas_cooker","air_conditioning","water_heater","inverter","car_garage"],
+        "enums": ["gas_cooker","air_conditioning","water_heater","inverter","car_garage","washer","dryer","wifi","gym","swimming_pool","kitchen","tv"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AddApartmentDTO": {
@@ -81,6 +147,7 @@ const models: TsoaRoute.Models = {
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"string","required":true},
             "pricePerNight": {"dataType":"double","required":true},
+            "cautionFee": {"dataType":"double","required":true},
             "location": {"dataType":"string","required":true},
             "amenities": {"dataType":"array","array":{"dataType":"refEnum","ref":"IApartmentAmenities"}},
             "bedrooms": {"dataType":"double","required":true},
@@ -142,21 +209,127 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsGetApartmentsController_get: Record<string, TsoaRoute.ParameterSchema> = {
-                req: {"in":"request","name":"req","required":true,"dataType":"object"},
-                queries: {"in":"queries","name":"queries","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double","required":true},"page":{"dataType":"double","required":true}}},
+        const argsHealthEndpointController_getMessage: Record<string, TsoaRoute.ParameterSchema> = {
         };
-        app.get('/api/v1/apartments',
-            ...(fetchMiddlewares<RequestHandler>(GetApartmentsController)),
-            ...(fetchMiddlewares<RequestHandler>(GetApartmentsController.prototype.get)),
+        app.get('/api/v1/health',
+            ...(fetchMiddlewares<RequestHandler>(HealthEndpointController)),
+            ...(fetchMiddlewares<RequestHandler>(HealthEndpointController.prototype.getMessage)),
 
-            async function GetApartmentsController_get(request: ExRequest, response: ExResponse, next: any) {
+            async function HealthEndpointController_getMessage(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsGetApartmentsController_get, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsHealthEndpointController_getMessage, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<HealthEndpointController>(HealthEndpointController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'getMessage',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsNewBookingController_newBooking: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                body: {"in":"body","name":"body","required":true,"ref":"NewBookingDTO"},
+        };
+        app.post('/api/v1/booking/new',
+            ...(fetchMiddlewares<RequestHandler>(NewBookingController)),
+            ...(fetchMiddlewares<RequestHandler>(NewBookingController.prototype.newBooking)),
+
+            async function NewBookingController_newBooking(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsNewBookingController_newBooking, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<NewBookingController>(NewBookingController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'newBooking',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsBookingsForAnApartmentController_apartmentBookings: Record<string, TsoaRoute.ParameterSchema> = {
+                apartmentUUID: {"in":"path","name":"apartmentUUID","required":true,"dataType":"string"},
+                queries: {"in":"queries","name":"queries","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
+        };
+        app.get('/api/v1/booking/apartment/:apartmentUUID',
+            ...(fetchMiddlewares<RequestHandler>(BookingsForAnApartmentController)),
+            ...(fetchMiddlewares<RequestHandler>(BookingsForAnApartmentController.prototype.apartmentBookings)),
+
+            async function BookingsForAnApartmentController_apartmentBookings(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsBookingsForAnApartmentController_apartmentBookings, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<BookingsForAnApartmentController>(BookingsForAnApartmentController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'apartmentBookings',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsGetApartmentsController_getApartments: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+                queries: {"in":"queries","name":"queries","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"amenities":{"dataType":"array","array":{"dataType":"string"}},"maxPrice":{"dataType":"string"},"minPrice":{"dataType":"string"},"title":{"dataType":"string"},"hostUUID":{"dataType":"string"},"uuid":{"dataType":"string"},"limit":{"dataType":"double"},"page":{"dataType":"double"}}},
+        };
+        app.get('/api/v1/apartments',
+            ...(fetchMiddlewares<RequestHandler>(GetApartmentsController)),
+            ...(fetchMiddlewares<RequestHandler>(GetApartmentsController.prototype.getApartments)),
+
+            async function GetApartmentsController_getApartments(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsGetApartmentsController_getApartments, request, response });
 
                 const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
 
@@ -166,7 +339,7 @@ export function RegisterRoutes(app: Router) {
                 }
 
               await templateService.apiHandler({
-                methodName: 'get',
+                methodName: 'getApartments',
                 controller,
                 response,
                 next,

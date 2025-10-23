@@ -7,9 +7,10 @@ import { CacheComponents } from '../../../cache/cacheComponents';
 import { ICache } from '../../../cache/interfaces/ICache';
 import BookingModel, {
     IBooking,
+    IBookingsFilters,
     IBookingStatus
 } from '../../../database/models/Booking.model';
-import { IAny, queryBuilder } from '../../../shared/utils/helpers';
+import { cachePagination, queryBuilder } from '../../../shared/utils/helpers';
 import { CachePrefix } from '../../../cache/CachePrefix';
 import { CustomException } from '../../../shared/exceptions/CustomException';
 
@@ -20,6 +21,35 @@ export class BookingRepository implements IBookingRepository {
         private readonly dbConnect: IDatabaseConnection,
         @inject(CacheComponents.Cache) private readonly cache: ICache
     ) {}
+
+    updateOne = async (props: {
+        reference: string;
+        update: Partial<IBooking>;
+    }): Promise<void> => {
+        const { reference, update } = props;
+
+        const sql = this.dbConnect.instance();
+        const booking = await BookingModel(sql).findOne({
+            where: { reference }
+        });
+        if (!booking) return;
+
+        const updatedBooking: Partial<IBooking> = {
+            ...update
+        };
+
+        const updateProcess = async (transaction: Transaction) => {
+            await BookingModel(sql).update(updatedBooking, {
+                where: { reference, uuid: booking.uuid },
+                transaction
+            });
+        };
+
+        const resp = await this.dbConnect.executeTransaction(updateProcess);
+        if (resp.error) {
+            throw new CustomException(resp.message);
+        }
+    };
 
     retrieveOne = async (
         bookingUUID: string
@@ -48,7 +78,7 @@ export class BookingRepository implements IBookingRepository {
         return exists;
     };
     findBookings = async (
-        queryRecord: Record<string, IAny>
+        queryRecord: IBookingsFilters
     ): Promise<{ total: number; bookings: Partial<IBooking>[] }> => {
         const { query, offset, limit } = queryBuilder(queryRecord, []);
 
@@ -115,8 +145,7 @@ export class BookingRepository implements IBookingRepository {
 
             return fromDB;
         } else {
-            const start = page === 1 ? page - 1 : limit * (page - 1);
-            const stop = page === 1 ? limit - 1 : start + (limit - 1);
+            const { start, stop } = cachePagination({ page, limit });
 
             const cached = await this.cache.lRange<Partial<IBooking>>({
                 key: cachedKey,
@@ -124,7 +153,7 @@ export class BookingRepository implements IBookingRepository {
                 stop
             });
 
-            if (cached.length === 0) {
+            if (cached.length !== limit) {
                 const fromDB = await this.findBookingsForAnApartment({
                     page,
                     limit,
@@ -158,12 +187,14 @@ export class BookingRepository implements IBookingRepository {
             reference: payload.reference as string,
             apartmentUUID: payload.apartmentUUID as string,
             totalAmountPaid: payload.totalAmountPaid as number,
-            checkoutDate: payload.checkoutDate as string,
+            checkOutDate: payload.checkOutDate as string,
+            checkInDate: payload.checkInDate as string,
             cautionFee: payload.cautionFee as number,
             bookingDate: payload.bookingDate as string,
             status: payload.status as IBookingStatus,
             numberOfNights: payload.numberOfNights as number,
-            guestUUID: payload.guestUUID as string
+            guestUUID: payload.guestUUID as string,
+            bookingCost: payload.bookingCost as number
         };
 
         const addProcess = async (transaction: Transaction) => {

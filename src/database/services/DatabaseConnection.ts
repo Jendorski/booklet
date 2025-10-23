@@ -33,7 +33,6 @@ export class DatabaseConnection implements IDatabaseConnection {
         const config = container.resolve<Config>(Config);
 
         const secretName = config.get<string>('DB_SECRET_NAME', '');
-        console.log({ secretName });
         if (!secretName || isEmpty(secretName)) {
             throw new CustomException('Invalid configuration');
         }
@@ -41,7 +40,7 @@ export class DatabaseConnection implements IDatabaseConnection {
         this.secretName = secretName;
 
         const encoded = config.get<string>('GOOGLE_SERVICE_ACCOUNT', '');
-        console.log({ encoded });
+
         if (!encoded || isEmpty(encoded)) {
             throw new CustomException(
                 'Service account is needed to initiate database connection'
@@ -61,23 +60,20 @@ export class DatabaseConnection implements IDatabaseConnection {
     async getSecret(secretVersionId: string = 'latest'): Promise<string> {
         try {
             this.secretClient = this.initiateSecretManager();
-            console.log({ secretClient: this.secretClient });
 
             const name = this.secretClient.secretVersionPath(
                 this.projectId,
                 this.secretName,
                 secretVersionId
             );
-            console.log([name]);
 
             const [version] = await this.secretClient.accessSecretVersion({
                 name: name
             });
-            console.log({ version });
 
             // Extract the secret payload
             const secretPayload = version.payload?.data;
-            console.log({ secretPayload });
+
             if (!secretPayload) {
                 throw new CustomException('Secret payload is empty');
             }
@@ -86,7 +82,7 @@ export class DatabaseConnection implements IDatabaseConnection {
             const secret = Buffer.from(secretPayload as Uint8Array).toString(
                 'utf8'
             );
-            console.log({ secret });
+
             return secret;
         } catch (error) {
             console.error(`Error accessing secret ${this.secretName}:`, error);
@@ -133,11 +129,9 @@ export class DatabaseConnection implements IDatabaseConnection {
         try {
             // Retrieve secret
             const secretValue = await this.getSecret();
-            console.log({ secretValue });
 
             // Parse credentials
             const credentials = this.parseCredentials(secretValue);
-            console.log({ credentials });
 
             // Create connection pool
             this.sequelize = new Sequelize({
@@ -165,8 +159,6 @@ export class DatabaseConnection implements IDatabaseConnection {
                     timeout: 5000
                 }
             });
-            console.log({ sequelize: this.sequelize });
-            console.log({ credentials });
 
             await this.sequelize.authenticate({
                 retry: { max: 3 }

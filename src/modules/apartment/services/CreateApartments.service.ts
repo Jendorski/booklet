@@ -55,7 +55,8 @@ export class CreateApartmentService implements ICreateApartmentService {
             bathrooms: payload.bathroom,
             toilets: payload.toilets,
             location: payload.location,
-            pricePerNight: payload.pricePerNight
+            pricePerNight: payload.pricePerNight,
+            cautionFee: payload.cautionFee
         };
 
         await this.apartmentRepo.add({ apartment });
