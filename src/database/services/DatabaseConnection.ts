@@ -105,7 +105,9 @@ export class DatabaseConnection implements IDatabaseConnection {
             const required = ['host', 'port', 'user', 'password', 'database'];
             for (const field of required) {
                 if (!credentials[field]) {
-                    throw new Error(`Missing required field: ${field}`);
+                    throw new CustomException(
+                        `Missing required field: ${field}`
+                    );
                 }
             }
 
