@@ -23,6 +23,7 @@ jobs:
         with:
           project_id: "free-trial-devops"
           workload_identity_provider: "projects/730780161888/locations/global/workloadIdentityPools/github-actions-pool/providers/github"
+          service_account: "dev-ops@free-trial-devops.iam.gserviceaccount.com"
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
