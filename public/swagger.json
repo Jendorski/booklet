@@ -7,6 +7,37 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Partial_IUser-and-_bearerTokenExpiry-number--brearToken-string__": {
+				"properties": {},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"ResponseStatus": {
+				"enum": [
+					"success",
+					"error"
+				],
+				"type": "string"
+			},
+			"ResponseDTO_Partial_IUser-and-_bearerTokenExpiry-number--brearToken-string___": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"$ref": "#/components/schemas/Partial_IUser-and-_bearerTokenExpiry-number--brearToken-string__"
+					}
+				},
+				"required": [
+					"status",
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"IUserType": {
 				"type": "string",
 				"enum": [
@@ -51,12 +82,65 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"ResponseStatus": {
-				"enum": [
-					"success",
-					"error"
+			"Partial_IUser_": {
+				"properties": {},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"ResponseDTO_Partial_IUser_-and-_bearerToken-string--bearerTokenExpiry-number__": {
+				"properties": {
+					"status": {
+						"$ref": "#/components/schemas/ResponseStatus"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/Partial_IUser_"
+							},
+							{
+								"properties": {
+									"bearerTokenExpiry": {
+										"type": "number",
+										"format": "double"
+									},
+									"bearerToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"bearerTokenExpiry",
+									"bearerToken"
+								],
+								"type": "object"
+							}
+						]
+					}
+				},
+				"required": [
+					"status",
+					"data"
 				],
-				"type": "string"
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginUserDTO": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
 			},
 			"ResponseDTO__reference-string--totalAmountToPay-number__": {
 				"properties": {
@@ -345,7 +429,7 @@
 		"version": "1.0.0",
 		"description": "Repository that showcases how a shortlet can be developed",
 		"license": {
-			"name": "ISC"
+			"name": "CC0-1.0 license"
 		},
 		"contact": {}
 	},
@@ -354,8 +438,15 @@
 			"post": {
 				"operationId": "Register",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO_Partial_IUser-and-_bearerTokenExpiry-number--brearToken-string___"
+								}
+							}
+						}
 					}
 				},
 				"tags": [
@@ -369,6 +460,38 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/RegisterUserDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ResponseDTO_Partial_IUser_-and-_bearerToken-string--bearerTokenExpiry-number__"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginUserDTO"
 							}
 						}
 					}

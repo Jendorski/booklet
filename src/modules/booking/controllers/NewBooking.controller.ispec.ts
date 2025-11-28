@@ -136,12 +136,12 @@ describe('New Booking Controller', () => {
     it('should throw a custom exception if the check-in date is behind the current date', async () => {
         const bookingPayload: NewBookingDTO = new NewBookingDTO();
         bookingPayload.apartmentUUID = apartment.uuid as string;
-        bookingPayload.checkInDate = Moment.subtract(new Date(), 2, 'd').format(
+        bookingPayload.checkInDate = Moment.subtract(new Date(), 3, 'd').format(
             'YYYY-MM-DD'
         );
         bookingPayload.checkOutDate =
             Moment.thisDayToCome(7).format('YYYY-MM-DD');
-        bookingPayload.numberOfNights = 7;
+        bookingPayload.numberOfNights = 8;
 
         await supertest(server)
             .post('/api/v1/booking/new')

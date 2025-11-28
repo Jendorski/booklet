@@ -21,8 +21,9 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
         with:
-          project_id: "lateral-medium-358108"
-          workload_identity_provider: "projects/264795560183/locations/global/workloadIdentityPools/github-actions-pool/providers/my-gihub-repo-oidc"
+          project_id: "free-trial-devops"
+          workload_identity_provider: "projects/730780161888/locations/global/workloadIdentityPools/github-actions-pool/providers/github"
+          service_account: "dev-ops@free-trial-devops.iam.gserviceaccount.com"
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
